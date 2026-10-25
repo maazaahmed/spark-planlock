@@ -1,0 +1,28 @@
+name: Share plans from your environment
+description: Contribute explain() output from a Spark version/runtime we don't test yet
+labels: ["fixtures", "good first issue"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Real plans from other runtimes (Databricks, Photon, EMR, Glue, Dataproc, Spark Connect, Spark 3.3/3.4...) are the best way to harden the parser.
+        Easiest path: install your Spark version and run `python scripts/capture_fixtures.py`, then open a PR with the new `tests/fixtures/real/spark-<version>/` folder.
+        If you can't do that, paste plans here instead (strip anything confidential).
+  - type: input
+    id: runtime
+    attributes:
+      label: Runtime and version
+      placeholder: e.g. Databricks 15.4 LTS with Photon
+    validations:
+      required: true
+  - type: textarea
+    id: plans
+    attributes:
+      label: Plan text
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything planlock got wrong on these plans?

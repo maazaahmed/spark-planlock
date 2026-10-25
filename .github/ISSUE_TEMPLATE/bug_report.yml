@@ -1,0 +1,38 @@
+name: Bug report
+description: Something is parsed, counted, linted or diffed wrong
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! The single most useful thing you can attach is the **plan text** (`df.explain()` output) that triggers the problem.
+        Please remove anything confidential (table names, bucket paths) first. `planlock normalize plan.txt` strips paths and ids.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you ran, what you expected, and what you got instead.
+    validations:
+      required: true
+  - type: textarea
+    id: plan
+    attributes:
+      label: Plan text
+      description: Output of `df.explain()` (or `explain(True)` / `explain(mode="formatted")`).
+      render: text
+  - type: input
+    id: spark
+    attributes:
+      label: Spark / runtime version
+      placeholder: e.g. Spark 3.5.3, Databricks 15.4 LTS, EMR 7.2, Spark Connect 4.0
+    validations:
+      required: true
+  - type: input
+    id: planlock
+    attributes:
+      label: spark-planlock version
+      placeholder: "planlock --version"
+  - type: input
+    id: python
+    attributes:
+      label: Python version

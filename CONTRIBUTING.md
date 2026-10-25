@@ -2,10 +2,22 @@
 
 Thanks for helping! Issues and PRs are welcome.
 
+* **Questions / ideas:** [Discussions](https://github.com/maazaahmed/spark-planlock/discussions)
+* **Bugs:** open an issue and include the plan text (`df.explain()` output)
+* **Want something to work on?** See [`good first issue`](https://github.com/maazaahmed/spark-planlock/labels/good%20first%20issue) and [`help wanted`](https://github.com/maazaahmed/spark-planlock/labels/help%20wanted)
+
+By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
+
+## Workflow
+
+1. Fork the repo and create a branch from `main`.
+2. Make your change with tests.
+3. Open a pull request. CI runs lint, the text-only suite on Python 3.9-3.13, and the Spark suite on Spark 3.5 and 4.0.
+
 ## Dev setup
 
 ```bash
-git clone <your fork>
+git clone https://github.com/<you>/spark-planlock.git  # your fork
 cd spark-planlock
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"

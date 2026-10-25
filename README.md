@@ -1,5 +1,12 @@
 # spark-planlock
 
+[![CI](https://github.com/maazaahmed/spark-planlock/actions/workflows/ci.yml/badge.svg)](https://github.com/maazaahmed/spark-planlock/actions/workflows/ci.yml)
+[![PyPI](https://img.shields.io/pypi/v/spark-planlock.svg)](https://pypi.org/project/spark-planlock/)
+[![Python](https://img.shields.io/badge/python-3.9%E2%80%933.13-blue.svg)](https://pypi.org/project/spark-planlock/)
+[![Spark](https://img.shields.io/badge/spark-3.5%20%7C%204.0-orange.svg)](tests/fixtures/real)
+[![License](https://img.shields.io/badge/license-Apache--2.0-green.svg)](LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
 **A lockfile for Spark query plans.** Test the *physical plan* of your PySpark jobs, so performance regressions (an extra shuffle, a broadcast join that turned into a sort-merge join, lost predicate pushdown, a Python UDF someone slipped in) fail in CI instead of showing up on the cluster bill.
 
 ```python
@@ -234,7 +241,7 @@ Because the core is pure text processing, it has zero runtime dependencies and t
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). The most valuable contributions are real plan fixtures from other Spark/Databricks/EMR/Glue versions (`python scripts/capture_fixtures.py`) and new lint rules.
+Contributions are very welcome, whether it's a bug report, a plan from your own environment that the parser gets wrong, or a new lint rule. Look for issues labelled [`good first issue`](https://github.com/maazaahmed/spark-planlock/labels/good%20first%20issue), ask questions in [Discussions](https://github.com/maazaahmed/spark-planlock/discussions), and see [CONTRIBUTING.md](CONTRIBUTING.md). The most valuable contributions are real plan fixtures from other Spark/Databricks/EMR/Glue versions (`python scripts/capture_fixtures.py`) and new lint rules.
 
 ## License
 

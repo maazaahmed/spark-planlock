@@ -1,0 +1,23 @@
+name: Feature request / new rule
+description: Suggest an assertion, lint rule, CLI command or integration
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem would this catch or solve?
+      description: Ideally a real performance incident or plan pattern you've seen.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed API / behaviour
+      placeholder: |
+        expect(df).no_skewed_join()
+        # or: lint rule PL010 - flags ...
+  - type: textarea
+    id: plan
+    attributes:
+      label: Example plan text (optional)
+      render: text
