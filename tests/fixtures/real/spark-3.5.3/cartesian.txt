@@ -1,0 +1,8 @@
+== Physical Plan ==
+CartesianProduct
+:- *(1) ColumnarToRow
+:  +- FileScan parquet [user_id#18L,amount#19,dt#20] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmpfnndje3i/events], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<user_id:bigint,amount:double>
++- *(2) ColumnarToRow
+   +- FileScan parquet [id#24L,country#25] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmpfnndje3i/users], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<id:bigint,country:string>
+
+
