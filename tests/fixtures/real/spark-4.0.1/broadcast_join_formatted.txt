@@ -1,0 +1,79 @@
+== Physical Plan ==
+AdaptiveSparkPlan (12)
++- HashAggregate (11)
+   +- Exchange (10)
+      +- HashAggregate (9)
+         +- Project (8)
+            +- BroadcastHashJoin Inner BuildRight (7)
+               :- Project (3)
+               :  +- Filter (2)
+               :     +- Scan parquet  (1)
+               +- BroadcastExchange (6)
+                  +- Filter (5)
+                     +- Scan parquet  (4)
+
+
+(1) Scan parquet 
+Output [3]: [user_id#6L, amount#7, dt#8]
+Batched: true
+Location: InMemoryFileIndex [file:/tmp/tmp6dgaxvyr/events]
+PartitionFilters: [isnotnull(dt#8), (dt#8 = 2024-01-01)]
+PushedFilters: [IsNotNull(amount), GreaterThan(amount,2.0), IsNotNull(user_id)]
+ReadSchema: struct<user_id:bigint,amount:double>
+
+(2) Filter
+Input [3]: [user_id#6L, amount#7, dt#8]
+Condition : ((isnotnull(amount#7) AND (amount#7 > 2.0)) AND isnotnull(user_id#6L))
+
+(3) Project
+Output [2]: [user_id#6L, amount#7]
+Input [3]: [user_id#6L, amount#7, dt#8]
+
+(4) Scan parquet 
+Output [2]: [id#9L, country#10]
+Batched: true
+Location: InMemoryFileIndex [file:/tmp/tmp6dgaxvyr/users]
+PushedFilters: [IsNotNull(id)]
+ReadSchema: struct<id:bigint,country:string>
+
+(5) Filter
+Input [2]: [id#9L, country#10]
+Condition : isnotnull(id#9L)
+
+(6) BroadcastExchange
+Input [2]: [id#9L, country#10]
+Arguments: HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=161]
+
+(7) BroadcastHashJoin
+Left keys [1]: [user_id#6L]
+Right keys [1]: [id#9L]
+Join type: Inner
+Join condition: None
+
+(8) Project
+Output [2]: [amount#7, country#10]
+Input [4]: [user_id#6L, amount#7, id#9L, country#10]
+
+(9) HashAggregate
+Input [2]: [amount#7, country#10]
+Keys [1]: [country#10]
+Functions [1]: [partial_sum(amount#7)]
+Aggregate Attributes [1]: [sum#38]
+Results [2]: [country#10, sum#39]
+
+(10) Exchange
+Input [2]: [country#10, sum#39]
+Arguments: hashpartitioning(country#10, 4), ENSURE_REQUIREMENTS, [plan_id=166]
+
+(11) HashAggregate
+Input [2]: [country#10, sum#39]
+Keys [1]: [country#10]
+Functions [1]: [sum(amount#7)]
+Aggregate Attributes [1]: [sum(amount#7)#37]
+Results [2]: [country#10, sum(amount#7)#37 AS revenue#31]
+
+(12) AdaptiveSparkPlan
+Output [2]: [country#10, revenue#31]
+Arguments: isFinalPlan=false
+
+

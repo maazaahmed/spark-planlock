@@ -1,0 +1,33 @@
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=true
++- == Final Plan ==
+   ResultQueryStage 2
+   +- *(3) HashAggregate(keys=[country#12], functions=[sum(amount#3)])
+      +- AQEShuffleRead coalesced
+         +- ShuffleQueryStage 1
+            +- Exchange hashpartitioning(country#12, 200), ENSURE_REQUIREMENTS, [plan_id=88]
+               +- *(2) HashAggregate(keys=[country#12], functions=[partial_sum(amount#3)])
+                  +- *(2) Project [amount#3, country#12]
+                     +- *(2) BroadcastHashJoin [user_id#1L], [id#10L], Inner, BuildRight, false
+                        :- *(2) Filter (isnotnull(user_id#1L) AND (dt#4 = 2024-01-01))
+                        :  +- *(2) ColumnarToRow
+                        :     +- FileScan parquet spark_catalog.default.events[user_id#1L,amount#3,dt#4] Batched: true, DataFilters: [isnotnull(user_id#1L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/wh/events], PartitionFilters: [isnotnull(dt#4), (dt#4 = 2024-01-01)], PushedFilters: [IsNotNull(user_id)], ReadSchema: struct<user_id:bigint,amount:double>
+                        +- BroadcastQueryStage 0
+                           +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=60]
+                              +- *(1) Filter isnotnull(id#10L)
+                                 +- *(1) ColumnarToRow
+                                    +- FileScan parquet spark_catalog.default.users[id#10L,country#12] Batched: true, DataFilters: [isnotnull(id#10L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/wh/users], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,country:string>
++- == Initial Plan ==
+   HashAggregate(keys=[country#12], functions=[sum(amount#3)])
+   +- Exchange hashpartitioning(country#12, 200), ENSURE_REQUIREMENTS, [plan_id=40]
+      +- HashAggregate(keys=[country#12], functions=[partial_sum(amount#3)])
+         +- Project [amount#3, country#12]
+            +- SortMergeJoin [user_id#1L], [id#10L], Inner
+               :- Sort [user_id#1L ASC NULLS FIRST], false, 0
+               :  +- Exchange hashpartitioning(user_id#1L, 200), ENSURE_REQUIREMENTS, [plan_id=30]
+               :     +- Filter (isnotnull(user_id#1L))
+               :        +- FileScan parquet spark_catalog.default.events[user_id#1L,amount#3,dt#4] Batched: true, DataFilters: [isnotnull(user_id#1L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/wh/events], PartitionFilters: [isnotnull(dt#4), (dt#4 = 2024-01-01)], PushedFilters: [IsNotNull(user_id)], ReadSchema: struct<user_id:bigint,amount:double>
+               +- Sort [id#10L ASC NULLS FIRST], false, 0
+                  +- Exchange hashpartitioning(id#10L, 200), ENSURE_REQUIREMENTS, [plan_id=31]
+                     +- Filter isnotnull(id#10L)
+                        +- FileScan parquet spark_catalog.default.users[id#10L,country#12] Batched: true, DataFilters: [isnotnull(id#10L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/wh/users], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,country:string>

@@ -1,0 +1,39 @@
+== Parsed Logical Plan ==
+'Aggregate ['country], ['country, 'sum('amount) AS revenue#22]
++- Join Inner, (user_id#6L = id#9L)
+   :- Filter ((dt#8 = cast(2024-01-01 as date)) AND (amount#7 > cast(2 as double)))
+   :  +- Relation [user_id#6L,amount#7,dt#8] parquet
+   +- Relation [id#9L,country#10] parquet
+
+== Analyzed Logical Plan ==
+country: string, revenue: double
+Aggregate [country#10], [country#10, sum(amount#7) AS revenue#22]
++- Join Inner, (user_id#6L = id#9L)
+   :- Filter ((dt#8 = cast(2024-01-01 as date)) AND (amount#7 > cast(2 as double)))
+   :  +- Relation [user_id#6L,amount#7,dt#8] parquet
+   +- Relation [id#9L,country#10] parquet
+
+== Optimized Logical Plan ==
+Aggregate [country#10], [country#10, sum(amount#7) AS revenue#22]
++- Project [amount#7, country#10]
+   +- Join Inner, (user_id#6L = id#9L)
+      :- Project [user_id#6L, amount#7]
+      :  +- Filter (((isnotnull(dt#8) AND isnotnull(amount#7)) AND ((dt#8 = 2024-01-01) AND (amount#7 > 2.0))) AND isnotnull(user_id#6L))
+      :     +- Relation [user_id#6L,amount#7,dt#8] parquet
+      +- Filter isnotnull(id#9L)
+         +- Relation [id#9L,country#10] parquet
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- HashAggregate(keys=[country#10], functions=[sum(amount#7)], output=[country#10, revenue#22])
+   +- Exchange hashpartitioning(country#10, 4), ENSURE_REQUIREMENTS, [plan_id=124]
+      +- HashAggregate(keys=[country#10], functions=[partial_sum(amount#7)], output=[country#10, sum#30])
+         +- Project [amount#7, country#10]
+            +- BroadcastHashJoin [user_id#6L], [id#9L], Inner, BuildRight, false
+               :- Project [user_id#6L, amount#7]
+               :  +- Filter ((isnotnull(amount#7) AND (amount#7 > 2.0)) AND isnotnull(user_id#6L))
+               :     +- FileScan parquet [user_id#6L,amount#7,dt#8] Batched: true, DataFilters: [isnotnull(amount#7), (amount#7 > 2.0), isnotnull(user_id#6L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/events], PartitionFilters: [isnotnull(dt#8), (dt#8 = 2024-01-01)], PushedFilters: [IsNotNull(amount), GreaterThan(amount,2.0), IsNotNull(user_id)], ReadSchema: struct<user_id:bigint,amount:double>
+               +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=119]
+                  +- Filter isnotnull(id#9L)
+                     +- FileScan parquet [id#9L,country#10] Batched: true, DataFilters: [isnotnull(id#9L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/users], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,country:string>
+

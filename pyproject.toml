@@ -1,0 +1,64 @@
+[build-system]
+requires = ["hatchling>=1.18"]
+build-backend = "hatchling.build"
+
+[project]
+name = "spark-planlock"
+dynamic = ["version"]
+description = "A lockfile for Spark query plans: assert on, snapshot, lint and diff PySpark physical plans so performance regressions fail in CI."
+readme = "README.md"
+license = "Apache-2.0"
+license-files = ["LICENSE"]
+requires-python = ">=3.9"
+authors = [{ name = "Maaz Ahmed" }]
+keywords = ["spark", "pyspark", "query-plan", "performance", "testing", "pytest", "snapshot", "data-engineering", "databricks", "lint"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Framework :: Pytest",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Topic :: Database",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
+    "Typing :: Typed",
+]
+# pyspark is intentionally optional: the parser, linter, differ and CLI work on plan text alone.
+dependencies = []
+
+[project.optional-dependencies]
+spark = ["pyspark>=3.3"]
+dev = ["pytest>=7", "pyspark>=3.3", "ruff>=0.5", "mypy>=1.8"]
+
+[project.urls]
+Homepage = "https://github.com/your-org/spark-planlock"
+Issues = "https://github.com/your-org/spark-planlock/issues"
+
+[project.scripts]
+planlock = "planlock.cli:main"
+
+[project.entry-points.pytest11]
+planlock = "planlock.pytest_plugin"
+
+[tool.hatch.version]
+path = "src/planlock/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/planlock"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+markers = ["spark: needs a local SparkSession (pyspark + Java)"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+ignore = ["UP006", "UP007", "UP035", "UP045", "E501"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
