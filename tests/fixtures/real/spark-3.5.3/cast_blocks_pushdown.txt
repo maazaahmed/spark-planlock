@@ -1,0 +1,6 @@
+== Physical Plan ==
+*(1) Filter (isnotnull(amount#19) AND (cast(amount#19 as string) = 3.0))
++- *(1) ColumnarToRow
+   +- FileScan parquet [user_id#18L,amount#19,dt#20] Batched: true, DataFilters: [isnotnull(amount#19), (cast(amount#19 as string) = 3.0)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmpfnndje3i/events], PartitionFilters: [], PushedFilters: [IsNotNull(amount)], ReadSchema: struct<user_id:bigint,amount:double>
+
+
