@@ -1,0 +1,10 @@
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Window [row_number() windowspecdefinition(id#9L ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#54], [id#9L ASC NULLS FIRST]
+   +- Sort [id#9L ASC NULLS FIRST], false, 0
+      +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=332]
+         +- Project [id#9L, country#10, pythonUDF0#56 AS c#53]
+            +- BatchEvalPython [shout(country#10)#52], [pythonUDF0#56]
+               +- FileScan parquet [id#9L,country#10] Batched: true, DataFilters: [], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/users], PartitionFilters: [], PushedFilters: [], ReadSchema: struct<id:bigint,country:string>
+
+

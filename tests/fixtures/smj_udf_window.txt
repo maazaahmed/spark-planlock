@@ -1,0 +1,26 @@
+== Parsed Logical Plan ==
+'Project [*]
++- 'UnresolvedRelation [x], [], false
+
+== Analyzed Logical Plan ==
+id: bigint
+
+== Optimized Logical Plan ==
+Project [id#0L]
+
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=false
++- Window [row_number() windowspecdefinition(ts#5 ASC NULLS FIRST, specifiedwindowframe(RowFrame, unboundedpreceding$(), currentrow$())) AS rn#20], [ts#5 ASC NULLS FIRST]
+   +- Sort [ts#5 ASC NULLS FIRST], false, 0
+      +- Exchange SinglePartition, ENSURE_REQUIREMENTS, [plan_id=101]
+         +- Project [id#0L, ts#5, pythonUDF0#33 AS clean#21]
+            +- BatchEvalPython [clean(name#2)#19], [pythonUDF0#33]
+               +- SortMergeJoin [id#0L], [id#8L], Inner
+                  :- Sort [id#0L ASC NULLS FIRST], false, 0
+                  :  +- Exchange hashpartitioning(id#0L, 200), ENSURE_REQUIREMENTS, [plan_id=90]
+                  :     +- Filter (isnotnull(id#0L) AND (cast(ts#5 as date) = 2024-01-01))
+                  :        +- FileScan parquet [id#0L,name#2,ts#5] Batched: true, DataFilters: [isnotnull(id#0L), (cast(ts#5 as date) = 2024-01-01)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[s3a://bucket/raw/events], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,name:string,ts:timestamp>
+                  +- Sort [id#8L ASC NULLS FIRST], false, 0
+                     +- Exchange hashpartitioning(id#8L, 200), ENSURE_REQUIREMENTS, [plan_id=91]
+                        +- Filter isnotnull(id#8L)
+                           +- LocalTableScan [id#8L, label#9]

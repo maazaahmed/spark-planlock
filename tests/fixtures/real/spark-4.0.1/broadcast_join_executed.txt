@@ -1,0 +1,34 @@
+== Physical Plan ==
+AdaptiveSparkPlan isFinalPlan=true
++- == Final Plan ==
+   ResultQueryStage 2
+   +- *(3) HashAggregate(keys=[country#10], functions=[sum(amount#7)])
+      +- AQEShuffleRead coalesced
+         +- ShuffleQueryStage 1
+            +- Exchange hashpartitioning(country#10, 4), ENSURE_REQUIREMENTS, [plan_id=290]
+               +- *(2) HashAggregate(keys=[country#10], functions=[partial_sum(amount#7)])
+                  +- *(2) Project [amount#7, country#10]
+                     +- *(2) BroadcastHashJoin [user_id#6L], [id#9L], Inner, BuildRight, false
+                        :- *(2) Project [user_id#6L, amount#7]
+                        :  +- *(2) Filter ((isnotnull(amount#7) AND (amount#7 > 2.0)) AND isnotnull(user_id#6L))
+                        :     +- *(2) ColumnarToRow
+                        :        +- FileScan parquet [user_id#6L,amount#7,dt#8] Batched: true, DataFilters: [isnotnull(amount#7), (amount#7 > 2.0), isnotnull(user_id#6L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/events], PartitionFilters: [isnotnull(dt#8), (dt#8 = 2024-01-01)], PushedFilters: [IsNotNull(amount), GreaterThan(amount,2.0), IsNotNull(user_id)], ReadSchema: struct<user_id:bigint,amount:double>
+                        +- BroadcastQueryStage 0
+                           +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=234]
+                              +- *(1) Filter isnotnull(id#9L)
+                                 +- *(1) ColumnarToRow
+                                    +- FileScan parquet [id#9L,country#10] Batched: true, DataFilters: [isnotnull(id#9L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/users], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,country:string>
++- == Initial Plan ==
+   HashAggregate(keys=[country#10], functions=[sum(amount#7)])
+   +- Exchange hashpartitioning(country#10, 4), ENSURE_REQUIREMENTS, [plan_id=208]
+      +- HashAggregate(keys=[country#10], functions=[partial_sum(amount#7)])
+         +- Project [amount#7, country#10]
+            +- BroadcastHashJoin [user_id#6L], [id#9L], Inner, BuildRight, false
+               :- Project [user_id#6L, amount#7]
+               :  +- Filter ((isnotnull(amount#7) AND (amount#7 > 2.0)) AND isnotnull(user_id#6L))
+               :     +- FileScan parquet [user_id#6L,amount#7,dt#8] Batched: true, DataFilters: [isnotnull(amount#7), (amount#7 > 2.0), isnotnull(user_id#6L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/events], PartitionFilters: [isnotnull(dt#8), (dt#8 = 2024-01-01)], PushedFilters: [IsNotNull(amount), GreaterThan(amount,2.0), IsNotNull(user_id)], ReadSchema: struct<user_id:bigint,amount:double>
+               +- BroadcastExchange HashedRelationBroadcastMode(List(input[0, bigint, false]),false), [plan_id=203]
+                  +- Filter isnotnull(id#9L)
+                     +- FileScan parquet [id#9L,country#10] Batched: true, DataFilters: [isnotnull(id#9L)], Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/tmp/tmp6dgaxvyr/users], PartitionFilters: [], PushedFilters: [IsNotNull(id)], ReadSchema: struct<id:bigint,country:string>
+
+
