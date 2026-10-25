@@ -31,8 +31,8 @@ spark = ["pyspark>=3.3"]
 dev = ["pytest>=7", "pyspark>=3.3", "ruff>=0.5", "mypy>=1.8"]
 
 [project.urls]
-Homepage = "https://github.com/your-org/spark-planlock"
-Issues = "https://github.com/your-org/spark-planlock/issues"
+Homepage = "https://github.com/maazaahmed/spark-planlock"
+Issues = "https://github.com/maazaahmed/spark-planlock/issues"
 
 [project.scripts]
 planlock = "planlock.cli:main"
